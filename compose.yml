@@ -1,5 +1,5 @@
 # 開発用の Docker Compose 設定
-# 使い方: docker compose up  → http://localhost:3000
+# 使い方: docker compose up  → http://localhost:3100
 services:
   db:
     image: postgres:16
@@ -8,18 +8,31 @@ services:
       POSTGRES_PASSWORD: password
     volumes:
       - pg_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+    # DBの準備完了を web 側が待てるようにヘルスチェックを設定
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+    # ホスト側からDBに直接つなぎたい場合のみ下記を有効化(既定は不要・ポート競合回避)。
+    # ports:
+    #   - "5433:5432"
 
   web:
     build:
       context: .
       dockerfile: Dockerfile.dev
+    # DB準備 → CSSビルド → サーバ起動(0.0.0.0でbindしないとホストから届かない)
+    command: >
+      bash -c "bin/rails db:prepare &&
+               bin/rails tailwindcss:build &&
+               bin/rails server -b 0.0.0.0 -p 3000"
     # ソースコードを変更したら即反映されるようホストのコードをマウント
     volumes:
       - .:/app
+    # ホスト側3100 → コンテナ3000(他プロジェクトの3000と競合するため)
     ports:
-      - "3000:3000"
+      - "3100:3000"
     environment:
       # database.yml がこの値を読んで db コンテナに接続する
       DATABASE_HOST: db
@@ -28,7 +41,22 @@ services:
     env_file:
       - .env
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+
+  # Tailwind CSS を監視して自動ビルド(web とは別プロセスに分離)
+  css:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: bin/rails tailwindcss:watch
+    volumes:
+      - .:/app
+    # 擬似TTYを割り当てないと watch が即終了するため付与
+    tty: true
+    stdin_open: true
+    depends_on:
+      - web
 
 volumes:
   pg_data:
