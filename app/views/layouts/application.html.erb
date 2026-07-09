@@ -20,12 +20,16 @@
 
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%# Tailwind CSS のビルド成果物 %>
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
   <body>
-    <main class="container mx-auto mt-28 px-5 flex">
+    <main class="container mx-auto mt-16 px-5">
       <%= yield %>
+      <%# 免責事項は全ページに表示する(プロジェクト方針) %>
+      <%= render "shared/disclaimer" %>
     </main>
   </body>
 </html>

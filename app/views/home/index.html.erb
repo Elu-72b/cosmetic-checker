@@ -1,0 +1,22 @@
+<% content_for :title, "化粧品成分チェッカー" %>
+
+<div class="w-full max-w-xl mx-auto text-center">
+  <h1 class="text-3xl font-bold text-gray-800">化粧品成分チェッカー</h1>
+
+  <p class="mt-4 text-gray-600 leading-relaxed">
+    化粧品の全成分表を撮影すると、成分を危険度1(緑)〜5(赤)で色分け表示します。
+  </p>
+
+  <div class="mt-8 inline-flex items-center gap-2 rounded-full bg-yellow-100 text-yellow-800 px-4 py-2 text-sm">
+    <span>🚧</span>
+    <span>ただいま開発中です。機能は順次公開されます。</span>
+  </div>
+
+  <div class="mt-8 flex justify-center gap-2">
+    <% [1, 2, 3, 4, 5].each do |level| %>
+      <span class="<%= { 1 => "bg-green-500", 2 => "bg-lime-400", 3 => "bg-yellow-400", 4 => "bg-orange-400", 5 => "bg-red-500" }[level] %> text-white text-sm font-bold rounded-full w-9 h-9 flex items-center justify-center">
+        <%= level %>
+      </span>
+    <% end %>
+  </div>
+</div>
