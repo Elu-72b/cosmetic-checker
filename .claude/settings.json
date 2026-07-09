@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(bin/rails:*)",
+      "Bash(bundle:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git switch:*)",
+      "Bash(git status)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(docker compose:*)"
+    ],
+    "ask": [
+      "Bash(git push:*)",
+      "Bash(git merge:*)",
+      "Bash(bin/rails db:drop:*)"
+    ],
+    "deny": [
+      "Read(.env)",
+      "Read(config/master.key)",
+      "Bash(git push:* --force)",
+      "Bash(rm -rf:*)"
+    ]
+  }
+}
