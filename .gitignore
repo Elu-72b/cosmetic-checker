@@ -1,0 +1,58 @@
+# ============================================
+# .gitignore — cosmetic-checker
+# 「秘密情報・自動生成物・個人環境ファイル」はpushしない
+# ※ rails new が生成した .gitignore がある場合は、この内容とマージする
+# ============================================
+
+# --- 秘密情報(絶対にコミットしない) ---
+.env
+.env.*
+!.env.example
+/config/master.key
+/config/credentials/*.key
+
+# --- ログ・一時ファイル ---
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+/tmp/pids/*
+!/tmp/pids/.keep
+
+# --- ローカルストレージ(アップロード物など) ---
+/storage/*
+!/storage/.keep
+
+# --- ビルド成果物・キャッシュ ---
+/public/assets
+/app/assets/builds/*
+!/app/assets/builds/.keep
+.bundle
+
+# --- 依存パッケージ(再生成できる) ---
+/node_modules
+
+# --- DBダンプ・バックアップ ---
+*.sql
+*.dump
+*.sqlite3
+*.sqlite3-*
+
+# --- OS・エディタが作るファイル ---
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# --- Claude Code のローカル設定(個人用) ---
+# .claude/settings.json はチーム共有用なのでコミットしてOK
+# settings.local.json は個人環境用なので除外する
+.claude/settings.local.json
+
+# ============================================
+# 【メモ】コミットして良いもの(除外しない)
+#   CLAUDE.md / docs/ 配下のプラン類 / README.md
+#   .claude/commands/ / .env.example(値なしの見本)
+# ============================================
