@@ -25,13 +25,18 @@ Rails.application.configure do
   config.active_storage.service = :local
 
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
-  # config.assume_ssl = true
+  # Render はSSL終端リバースプロキシ越しにアクセスされるため有効化。
+  config.assume_ssl = true
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  # config.force_ssl = true
+  config.force_ssl = true
 
   # Skip http-to-https redirect for the default health check endpoint.
-  # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
+  config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
+
+  # Render は単一Webサービスで配信するため、Rails自身に静的アセットを配信させる。
+  # 環境変数 RAILS_SERVE_STATIC_FILES が設定されていれば有効。
+  config.public_file_server.enabled = ENV["RAILS_SERVE_STATIC_FILES"].present?
 
   # Log to STDOUT with the current request id as a default log tag.
   config.log_tags = [ :request_id ]

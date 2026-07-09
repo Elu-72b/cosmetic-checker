@@ -18,15 +18,17 @@ default: &default
   # For details on connection pooling, see Rails configuration guide
   # https://guides.rubyonrails.org/configuring.html#database-pooling
   max_connections: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  # Docker開発では db コンテナへ接続する。未設定ならローカルのlocalhostにフォールバック。
-  # 本番(Render)は DATABASE_URL がこの設定に上書きされる。
+
+# 開発/テストの接続情報。Docker開発では db コンテナへ、
+# 未設定ならローカルの localhost にフォールバックする。
+local_connection: &local_connection
   host: <%= ENV.fetch("DATABASE_HOST", "localhost") %>
   username: <%= ENV.fetch("DATABASE_USER", "postgres") %>
   password: <%= ENV.fetch("DATABASE_PASSWORD", "password") %>
 
 
 development:
-  <<: *default
+  <<: [*default, *local_connection]
   database: cosmetic_checker_development
 
   # The specified database role being used to connect to PostgreSQL.
@@ -60,7 +62,7 @@ development:
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
-  <<: *default
+  <<: [*default, *local_connection]
   database: cosmetic_checker_test
 
 # As with config/credentials.yml, you never want to store sensitive information,
@@ -89,21 +91,19 @@ test:
 # Read https://guides.rubyonrails.org/configuring.html#configuring-a-database
 # for a full overview on how database connection configuration can be specified.
 #
+# 本番(Render)は単一の PostgreSQL を使う。
+# primary / cache / queue / cable すべてを DATABASE_URL の同一DBに向け、
+# それぞれの migrations_paths で必要なテーブルを同じDB内に作成する。
 production:
   primary: &primary_production
     <<: *default
-    database: cosmetic_checker_production
-    username: cosmetic_checker
-    password: <%= ENV["COSMETIC_CHECKER_DATABASE_PASSWORD"] %>
+    url: <%= ENV["DATABASE_URL"] %>
   cache:
     <<: *primary_production
-    database: cosmetic_checker_production_cache
     migrations_paths: db/cache_migrate
   queue:
     <<: *primary_production
-    database: cosmetic_checker_production_queue
     migrations_paths: db/queue_migrate
   cable:
     <<: *primary_production
-    database: cosmetic_checker_production_cable
     migrations_paths: db/cable_migrate
