@@ -1,0 +1,24 @@
+# 開発用Dockerfile(本番用の Dockerfile とは別物)
+# 本番は Kamal/Thruster 用の ./Dockerfile を使う。こちらは compose.yml から使う。
+ARG RUBY_VERSION=3.4.4
+FROM docker.io/library/ruby:$RUBY_VERSION-slim
+
+WORKDIR /app
+
+# gemのビルド・pg・tailwindcss(nodeなしのstandalone)に必要なパッケージ
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y \
+      build-essential git libpq-dev libvips libyaml-dev pkg-config curl && \
+    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+
+# 先にGemfileだけコピーしてbundle install(レイヤキャッシュを効かせる)
+COPY Gemfile Gemfile.lock ./
+RUN bundle install
+
+# アプリ本体は compose 側でボリュームマウントするため、初回ビルド用に一応コピー
+COPY . .
+
+EXPOSE 3000
+
+# Procfile.dev(rails server + tailwindcss:watch)を foreman で起動
+CMD ["./bin/dev"]
