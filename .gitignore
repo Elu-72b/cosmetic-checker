@@ -51,8 +51,14 @@ Thumbs.db
 # settings.local.json は個人環境用なので除外する
 .claude/settings.local.json
 
+# --- Claude と進める開発の作業ファイル(ローカル専用) ---
+# プラン・実装ログ・Claude 用コマンドは個人の作業メモなのでpushしない
+/docs/development_plan/
+/docs/development_log/
+/.claude/commands/
+
 # ============================================
 # 【メモ】コミットして良いもの(除外しない)
-#   CLAUDE.md / docs/ 配下のプラン類 / README.md
-#   .claude/commands/ / .env.example(値なしの見本)
+#   .claude/CLAUDE.md / .claude/settings.json / README.md
+#   docs/CAUTION_CRITERIA.md / .env.example(値なしの見本)
 # ============================================
